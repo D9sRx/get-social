@@ -1,18 +1,12 @@
 import ThemeProvider from "@/components/ui/ThemeProvider";
-
-import Tabs from "@/components/ui/Tabs";
+import {Slot} from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 
 export default function Layout() {
   return (
     <ThemeProvider>
-      <Tabs>
-        <Tabs.Screen name="(index)" systemImage="house.fill" title="Home" />
-        <Tabs.Screen
-          name="(info)"
-          systemImage="cursorarrow.rays"
-          title="Info"
-        />
-      </Tabs>
+      <StatusBar />  {/* 适应状态栏 */}
+      <Slot />
     </ThemeProvider>
   );
 }

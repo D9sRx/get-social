@@ -12,6 +12,7 @@ export default function Page() {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: '#1C1D2F',
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
+        color: 'white',
     }
 
 
