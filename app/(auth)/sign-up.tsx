@@ -1,8 +1,9 @@
 import { AppButton } from '@/components/ui/Appbutton';
 import { Text } from '@/components/ui/Form';
+import { secureSave } from '@/utils/storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View, TextInput } from 'react-native';
 
 
 export default function Page() {
@@ -37,8 +38,9 @@ export default function Page() {
 
             if(response.ok){
                 const data = await response.json();
-                localStorage.setItem('token', data.token);
-                router.push("/dashboard")
+                await secureSave('token', data.token);
+                router.push("/dashboard/(index)")
+                console.log("sign up successfully");
                 console.log(data);
             }
             alert("You signed up successfully!");

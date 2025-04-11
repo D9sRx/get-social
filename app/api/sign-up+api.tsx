@@ -1,7 +1,8 @@
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { generateJWT, HashPassword } from "@/utils/auth";
 import { eq } from "drizzle-orm";
-import jwt from "jsonwebtoken";
+
 
 export async function POST(request: Response){
     const {email, password} = await request.json();
@@ -30,6 +31,7 @@ export async function POST(request: Response){
             {status :400}
         );
     } 
+
     //2. look up user by email in the database
     const user = await db.query.users.findFirst({
         where: eq(users.email, email),
@@ -44,17 +46,19 @@ export async function POST(request: Response){
         );
     }
 
+    //Hash the password using Web Crypto API
+    const hashedPassword = await HashPassword(password);
+
 
     //4. if the user does not exist, create a new user in the database
     const [newUser] = await db.insert(users).values({
         email,
-        //TODO salt andhash the password before storing it in the database
-        password,
+        password: hashedPassword,
     }).returning();
 
     //5. generate a JWT token for the user
-    const token = jwt.sign({userId: newUser.id}, process.env.JWT_SECRET!);
-
+    const token = await generateJWT(newUser.id);
+    
     //6. return the JWT token as a response
 
     return Response.json({token});

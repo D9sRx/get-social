@@ -1,10 +1,28 @@
 import { AppButton } from '@/components/ui/Appbutton';
 import { Text } from '@/components/ui/Form';
+import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'expo-router';
-import { Image, Button, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 
 export default function Page() {
     const router = useRouter();
+
+    const { isLoggedIn, isLoading } = useAuth();
+
+    if (isLoading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator />
+            </View>
+        );
+
+    }
+
+    if (isLoggedIn) {
+        router.push("/dashboard/(index)");
+    }
+
+
     return (
         <View style={styles.container}>
 

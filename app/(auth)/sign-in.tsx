@@ -1,47 +1,63 @@
 import { AppButton } from '@/components/ui/Appbutton';
 import { Text } from '@/components/ui/Form';
+import { secureSave } from '@/utils/storage';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { TextInput,Pressable,StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TextInput } from 'react-native';
+
 
 export default function Page() {
 
+    const router = useRouter();
+
+    
+    
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    function handleSignIn() {
+    function handleSignUp() {
         if(!email || !password){
             alert('Please fill all fields');
             return;
         }
-
+        
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if(!emailRegex.test(email)){
             alert('Please enter a valid email');
             return;
         } 
+        
 
-        if(password.length < 8){
-            alert('Password must be at least 6 characters long');
-            return;
-        }
+        // api request
+        fetch('/api/sign-in',{
+            method: "POST",
+            body: JSON.stringify({email, password}),
+        }).then(async (response) => {
+
+            if(response.ok){
+                const data = await response.json();
+                await secureSave('token', data.token);
+                router.push("/dashboard/(index)")
+                console.log(data);
+                setPassword('');
+                setEmail('');
+            }
+            alert("You signed in successfully!");
+        });
+ 
     }
-
-
-
 
     return (
         <View style={styles.container}>
+
             <View style={styles.form}>
-                
-            
                 <Text style={styles.title}>Sign in</Text>
                 <View style={styles.field}>
                     <Text style={styles.label}>Email</Text>
-                    <TextInput 
-                        style={styles.input}
+                    <TextInput  
+                        style={styles.input} 
                         onChangeText={setEmail}
                         autoCapitalize='none'
-                        
                     />
                 </View>
                 <View style={styles.field}>
@@ -53,12 +69,11 @@ export default function Page() {
                         secureTextEntry
                     />
                 </View>
-
             </View>
-            <AppButton onPress={handleSignIn}>登录</AppButton>
+            <AppButton onPress={handleSignUp}>登录</AppButton>
         </View>
 
-    );
+    )
 }
 
 const styles = StyleSheet.create({
@@ -73,6 +88,18 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: 'white',
+    },
+    signUpButton: {
+        backgroundColor: '#4A90E2',
+        borderRadius: 8,
+        width: 100,
+        padding: 7,
+
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     input: {
         height: 40,
