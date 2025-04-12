@@ -2,12 +2,19 @@ import { AppButton } from '@/components/ui/Appbutton';
 import { Text } from '@/components/ui/Form';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 
 export default function Page() {
     const router = useRouter();
 
     const { isLoggedIn, isLoading } = useAuth();
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            router.push("/dashboard/(dashboard)");
+        }
+    }, [isLoggedIn]);
 
     if (isLoading) {
         return (
@@ -17,11 +24,6 @@ export default function Page() {
         );
 
     }
-
-    if (isLoggedIn) {
-        router.push("/dashboard/(index)");
-    }
-
 
     return (
         <View style={styles.container}>
